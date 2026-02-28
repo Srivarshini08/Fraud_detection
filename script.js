@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const confidenceLevelEl = document.getElementById('confidenceLevel');
     const factorsListEl = document.getElementById('factorsList');
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         // 1. Get input values
@@ -54,17 +54,32 @@ document.addEventListener('DOMContentLoaded', () => {
             predictionContent.style.display = 'flex';
         }, 300);
 
-        // 3. Simulate Network/Model Delay (2 seconds)
-        setTimeout(() => {
+        // 3. Send Network Request to Backend API
+        try {
+            const response = await fetch('http://localhost:3000/api/analyze-claim', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    amount: amount,
+                    diagCode: diagCode,
+                    providerId: providerId
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const prediction = await response.json();
+
             // Restore button
             analyzeBtn.disabled = false;
             btnText.textContent = 'Analyze Claim';
             loader.style.display = 'none';
 
-            // 4. Generate Mock Prediction based on inputs
-            const prediction = generateMockPrediction(amount, diagCode, providerId);
-
-            // 5. Update UI
+            // 4. Update UI
             updatePredictionUI(prediction);
             predictionContent.style.opacity = '1';
 
@@ -73,67 +88,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.querySelector('.results-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
 
-        }, 2000);
+        } catch (error) {
+            console.error('Error analyzing claim:', error);
+            alert('There was an error analyzing the claim. Please ensure the backend server is running.');
+            analyzeBtn.disabled = false;
+            btnText.textContent = 'Analyze Claim';
+            loader.style.display = 'none';
+        }
     });
 
-    function generateMockPrediction(amount, code, provider) {
-        // Simple mock logic to make output feel dynamic based on input
-        let score = 15; // Base legit score
-        let factors = [];
-
-        // Fictional risk logic
-        if (amount > 10000) {
-            score += 40;
-            factors.push(`Unusually high claim amount (₹${amount}) for typical percentile`);
-        } else if (amount > 5000) {
-            score += 20;
-            factors.push("Claim amount exceeds standard threshold");
-        }
-
-        if (code.toUpperCase().startsWith('X') || code.toUpperCase().includes('99')) {
-            score += 35;
-            factors.push(`Suspicious/Rare diagnosis code format (${code.toUpperCase()})`);
-        }
-
-        if (provider.length < 5) {
-            score += 10;
-            factors.push("Unrecognized or new provider ID structure");
-        }
-
-        // Add some randomness
-        score += Math.floor(Math.random() * 10);
-
-        // Cap score
-        score = Math.min(Math.max(score, 5), 98);
-
-        // Determine class
-        let decision = 'Legitimate';
-        let decisionClass = 'legit';
-        let confidence = (100 - score).toFixed(1);
-
-        if (score > 75) {
-            decision = 'Fraud Detected';
-            decisionClass = 'fraud';
-            confidence = score.toFixed(1);
-            if (factors.length === 0) factors.push("Unusual billing pattern detected by neural net");
-        } else if (score > 45) {
-            decision = 'Manual Review Needed';
-            decisionClass = 'review';
-            confidence = 88.5; // Fixed reasonable confidence for ambiguity
-            if (factors.length === 0) factors.push("Minor anomaly in historical context");
-        } else {
-            if (factors.length === 0) factors.push("Matches standard historical claim profiles");
-            factors.push("Provider has high trust score");
-        }
-
-        return {
-            score,
-            decision,
-            decisionClass,
-            confidence,
-            factors
-        };
-    }
 
     function updatePredictionUI(data) {
         // Animate counter
