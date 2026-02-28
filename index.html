@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aegis | AI-Powered Health Insurance Fraud Detection</title>
+    <meta name="description" content="Advanced AI fraud detection for health insurance claims. Real-time analysis, anomaly detection, and predictive scoring.">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="glow-bg"></div>
+    
+    <nav class="navbar">
+        <div class="logo">Aegis<span>.ai</span></div>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#analysis">Claim Analysis</a></li>
+            <li><a href="#how-it-works">How it Works</a></li>
+        </ul>
+        <button class="btn-primary" onclick="document.getElementById('analysis').scrollIntoView({behavior: 'smooth'})">Try Demo</button>
+    </nav>
+
+    <main>
+        <section id="hero" class="hero">
+            <div class="container hero-content">
+                <h1>Securing Healthcare with <br><span class="highlight">Predictive AI</span></h1>
+                <p>Detect anomalies and prevent health insurance fraud in real-time before claims are paid. Protect your bottom line with state-of-the-art machine learning models.</p>
+                <div class="hero-actions">
+                    <button class="btn-primary" onclick="document.getElementById('analysis').scrollIntoView({behavior: 'smooth'})">Run Claim Analysis</button>
+                    <button class="btn-secondary" onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})">View Features</button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="glass-panel dashboard-preview">
+                    <div class="dash-header">
+                        <h3>System Status</h3>
+                        <span class="status-indicator"></span>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <span class="metric-label">Processed Today</span>
+                            <span class="metric-value" id="count-processed">12,450</span>
+                        </div>
+                        <div class="metric-card alert">
+                            <span class="metric-label">High Risk Claims</span>
+                            <span class="metric-value">4.2%</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Savings</span>
+                            <span class="metric-value text-green">$1.2M</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features container">
+            <div class="section-title text-center">
+                <h2>Why Choose Aegis?</h2>
+                <p>Enterprise-grade security meets seamless integration.</p>
+            </div>
+            <div class="grid-3">
+                <div class="feature-card glass-panel fade-up">
+                    <div class="icon">🔍</div>
+                    <h3>Real-Time Analysis</h3>
+                    <p>Sub-second response times for API integrations to analyze claims instantly during submission.</p>
+                </div>
+                <div class="feature-card glass-panel fade-up" style="transition-delay: 100ms">
+                    <div class="icon">🧠</div>
+                    <h3>Deep Anomalies</h3>
+                    <p>Our neural networks identify complex multi-variable patterns that rule-based systems miss.</p>
+                </div>
+                <div class="feature-card glass-panel fade-up" style="transition-delay: 200ms">
+                    <div class="icon">📊</div>
+                    <h3>Explainable AI</h3>
+                    <p>Get clear risk factors for every prediction, empowering your investigation teams with actionable insights.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="analysis" class="analysis-section container">
+            <div class="section-title text-center fade-up">
+                <h2>Interactive Claim Analysis</h2>
+                <p>Try our mock model. Enter claim details below to see prediction results instantly.</p>
+            </div>
+            
+            <div class="analysis-container fade-up">
+                <form id="claimForm" class="glass-panel claim-form">
+                    <h3>Submit Claim Details</h3>
+                    <div class="form-group">
+                        <label for="patientId">Patient ID</label>
+                        <input type="text" id="patientId" required placeholder="e.g., PT-84729" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="providerId">Provider ID</label>
+                        <input type="text" id="providerId" required placeholder="e.g., PRV-102" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="diagnosisCode">Diagnosis Code (ICD-10)</label>
+                        <input type="text" id="diagnosisCode" required placeholder="e.g., J01.90" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="claimAmount">Claim Amount ($)</label>
+                        <input type="number" id="claimAmount" required placeholder="e.g., 4500.00" min="0" step="0.01">
+                    </div>
+                    <button type="submit" class="btn-primary w-100" id="analyzeBtn">
+                        <span class="btn-text">Analyze Claim</span>
+                        <span class="loader" style="display: none;"></span>
+                    </button>
+                </form>
+
+                <div class="results-panel glass-panel">
+                    <h3>Analysis Results</h3>
+                    <div id="resultState" class="result-state default">
+                        <div class="placeholder-icon">🤖</div>
+                        <p>Submit a claim to see AI prediction results here.</p>
+                    </div>
+                    
+                    <div id="predictionResult" class="prediction-content" style="display: none;">
+                        <div class="risk-meter">
+                            <div class="risk-circle" id="riskCircle">
+                                <span class="risk-score" id="riskScore">--</span>
+                                <span class="risk-label">Risk Score</span>
+                            </div>
+                        </div>
+                        <div class="prediction-details">
+                            <h4 id="predictionDecision" class="decision">--</h4>
+                            <p class="confidence">Confidence: <span id="confidenceLevel">--</span>%</p>
+                            
+                            <div class="risk-factors">
+                                <h5>Key Risk Factors:</h5>
+                                <ul id="factorsList">
+                                    <!-- Populated by JS -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="glass-panel">
+        <div class="container text-center">
+            <p>&copy; 2026 Aegis Health AI. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
